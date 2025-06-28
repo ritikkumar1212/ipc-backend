@@ -11,6 +11,10 @@ const apiKey = process.env.OPENROUTER_API_KEY;
 app.post('/analyze', async (req, res) => {
   const { scenario } = req.body;
 
+  const languageInstruction = language === 'hindi'
+    ? "Respond only in Hindi."
+    : "Respond only in English.";
+
   try {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
