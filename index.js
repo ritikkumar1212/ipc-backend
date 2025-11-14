@@ -13,9 +13,9 @@ app.post('/analyze', async (req, res) => {
 
   try {
     const response = await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
+      'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: 'mistralai/mistral-small-3.2-24b-instruct:free',
+        model: "llama3-8b-8192",
         messages: [
           {
             role: 'system',
