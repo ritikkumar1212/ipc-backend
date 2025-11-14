@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const apiKey = process.env.OPENROUTER_API_KEY;
+const apiKey = process.env.GROQ_API_KEY;
 app.post('/analyze', async (req, res) => {
   const { scenario } = req.body;
 
