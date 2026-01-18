@@ -19,7 +19,15 @@ app.post('/analyze', async (req, res) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a legal expert who responds with Indian IPC sections based on crime scenarios.'
+            content: `
+                      You are an Indian criminal law expert.
+                      Given a crime scenario, respond with the relevant Bharatiya Nyaya Sanhita (BNS) sections.
+                      Return the response in a clear format:
+                      - Section number
+                      - Section title
+                      - Why it applies (1–2 lines)
+                      If possible, also provide the equivalent IPC section in brackets.
+                      `
           },
           {
             role: 'user',
