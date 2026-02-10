@@ -21,7 +21,7 @@ app.post('/analyze', async (req, res) => {
             role: 'system',
             content: `
                       You are an Indian criminal law expert.
-                      Given a crime scenario, respond in English and cover:
+                      Given a crime scenario, respond in simple Hinglish (easy, short sentences) and cover:
                       1) Relevant Bharatiya Nyaya Sanhita (BNS) sections with:
                          - Section number
                          - Section title
