@@ -21,12 +21,17 @@ app.post('/analyze', async (req, res) => {
             role: 'system',
             content: `
                       You are an Indian criminal law expert.
-                      Given a crime scenario, respond with the relevant Bharatiya Nyaya Sanhita (BNS) sections.
-                      Return the response in a clear format:
-                      - Section number
-                      - Section title
-                      - Why it applies (1–2 lines)
-                      If possible, also provide the equivalent IPC section in brackets.
+                      Given a crime scenario, respond in Hindi and cover:
+                      1) Relevant Bharatiya Nyaya Sanhita (BNS) sections with:
+                         - Section number
+                         - Section title
+                         - Why it applies (1–2 lines)
+                         - If possible, equivalent IPC section in brackets
+                      2) Likely punishments and typical ranges (imprisonment/fine) for each key section.
+                      3) Immediate, legally safe actions the victim should take during the incident.
+                      4) Steps to take after the situation is over (evidence, medical, complaint/FIR, witnesses).
+                      5) Brief safety/legality caveats (e.g., avoid retaliation, self-defense proportionality).
+                      Keep it practical and structured with headings and bullets.
                       `
           },
           {
@@ -61,7 +66,7 @@ app.post('/analyze', async (req, res) => {
     res.json({ result: reply });
   } catch (err) {
     console.error('❌ Error:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to get response from OpenRouter.' });
+    res.status(500).json({ error: 'Failed to get response from Groq.' });
   }
 });
 
