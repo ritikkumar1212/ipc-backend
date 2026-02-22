@@ -7,8 +7,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const apiKey = process.env.GROQ_API_KEY;
 const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+const getApiKey = () => `${process.env.GROQ_API_KEY || ''}`.trim();
+
+app.get('/health', (_req, res) => {
+  return res.json({
+    ok: true,
+    service: 'ipc-backend',
+    model,
+    groqConfigured: Boolean(getApiKey()),
+  });
+});
 
 const CATEGORY_HINTS = {
   robbery:
@@ -80,6 +89,7 @@ const buildUserPrompt = ({
 };
 
 app.post('/analyze', async (req, res) => {
+  const apiKey = getApiKey();
   const scenario = `${req.body?.scenario || ''}`.trim();
   const role = normalizeRole(req.body?.role);
   const audienceMode = normalizeAudienceMode(req.body?.audienceMode);
@@ -97,7 +107,10 @@ app.post('/analyze', async (req, res) => {
   }
 
   if (!apiKey) {
-    return res.status(500).json({ error: 'GROQ_API_KEY is not configured.' });
+    return res.status(500).json({
+      error:
+        'GROQ_API_KEY is not configured. Create backend/ipc-backend/.env and add GROQ_API_KEY=YOUR_KEY.',
+    });
   }
 
   const userPrompt = buildUserPrompt({
@@ -152,8 +165,16 @@ app.post('/analyze', async (req, res) => {
       meta: { role, audienceMode, analysisType, categoryKey },
     });
   } catch (err) {
-    console.error('Error:', err.response?.data || err.message);
-    return res.status(500).json({ error: 'Failed to get response from Groq.' });
+    const status = err.response?.status;
+    const providerError =
+      err.response?.data?.error?.message ||
+      err.response?.data?.error ||
+      err.message ||
+      'Unknown provider error';
+    console.error('Error:', status ? `[${status}] ${providerError}` : providerError);
+    return res.status(500).json({
+      error: `Failed to get response from Groq: ${providerError}`,
+    });
   }
 });
 
@@ -161,4 +182,9 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  if (!getApiKey()) {
+    console.warn(
+      'Warning: GROQ_API_KEY is missing. /analyze will fail until backend/ipc-backend/.env is configured.'
+    );
+  }
 });
