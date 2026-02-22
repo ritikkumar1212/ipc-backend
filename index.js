@@ -82,7 +82,14 @@ const buildUserPrompt = ({
   }
 
   if (role === 'self') {
+    if (audienceMode === 'professional') {
+      return `${scenario}\n\n${sharedContext}\nProvide a legally rigorous action plan in English for advising the affected person: (1) immediate protective/legal actions, and (2) post-incident procedural strategy, including reporting, evidence preservation, and counsel steps. Keep it concise. Do not mention IPC.`;
+    }
     return `${scenario}\n\n${sharedContext}\nFocus only on what the user should do next: (1) immediate actions during the incident, and (2) actions after the incident. Keep it practical and safety-first. Do not mention IPC.`;
+  }
+
+  if (audienceMode === 'professional') {
+    return `${scenario}\n\n${sharedContext}\nProvide a legally rigorous witness-side action framework in English: (1) immediate safe intervention boundaries, and (2) post-incident procedural steps including reporting channels, evidence integrity, and witness statement protocol. Keep it concise. Do not mention IPC.`;
   }
 
   return `${scenario}\n\n${sharedContext}\nFocus only on what a witness should do next: (1) immediate safe actions during the incident, and (2) actions after the incident including reporting, preserving evidence, and giving witness statement. Keep it practical and safety-first. Do not mention IPC.`;
@@ -98,12 +105,6 @@ app.post('/analyze', async (req, res) => {
 
   if (!scenario) {
     return res.status(400).json({ error: 'Scenario is required.' });
-  }
-
-  if (audienceMode === 'professional' && analysisType === 'next_steps') {
-    return res.status(400).json({
-      error: 'next_steps is disabled for professional mode.',
-    });
   }
 
   if (!apiKey) {
