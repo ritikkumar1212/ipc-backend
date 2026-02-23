@@ -127,7 +127,7 @@ app.post('/analyze', async (req, res) => {
       'https://api.groq.com/openai/v1/chat/completions',
       {
         model,
-        temperature: 0.2,
+        temperature: 0,
         messages: [
           {
             role: 'system',
